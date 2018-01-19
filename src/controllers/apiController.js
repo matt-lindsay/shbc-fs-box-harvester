@@ -1,9 +1,9 @@
 'use strict';
 
-//const BoxHTaskService = require('../services/BoxHTaskService');
+//const BoxFsService = require('../services/BoxFsService');
 //const boxClient = require('../resources/box');
 
-var apiController = function() {
+var apiController = function(client) {
 
     var hello = function(req, res) {
       res.status(200).send('Hello, this is the API route!');
@@ -15,8 +15,8 @@ var apiController = function() {
         // let data = req.body;
 
         // // Box.
-        // var htaskBox = new BoxHTaskService(client);
-        // htaskBox.createTaskFolders(data, function(err, result) {
+        // var fsBox = new BoxFsService(client);
+        // fsBox.createTaskFolders(data, function(err, result) {
         //     if (err) {
         //       res.status(500).send(err);
         //     } else {
