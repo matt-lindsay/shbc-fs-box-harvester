@@ -18,8 +18,8 @@ gulp.task('style', function() {
         .pipe(jscs());
   });
 
-gulp.task('test', function () {
-    env({ vars: { ENV: 'Test' }});
+gulp.task('test', function() {
+    env({ vars: { ENV: 'Test' } });
     gulp.src('tests/*.js', { read: false })
       .pipe(gulpMocha({ report: 'nyan' }));
   });
