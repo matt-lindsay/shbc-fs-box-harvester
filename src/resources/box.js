@@ -1,29 +1,28 @@
 'use strict';
 
-const fs = require('fs');
 const Box = require('box-node-sdk');
 
 var boxClient = function() {
     var boxClientID = process.env.boxClientID;
     var boxClientSecret = process.env.boxClientSecret;
-    var privateKey = fs.readFileSync(__dirname + '/private_key.pem', { encoding: 'utf8' });
+    var privateKey = process.env.boxPrivateKey;
     var publicKeyId = process.env.boxKeyID;
     var publicKeyPassphrase = process.env.boxKeyPassphrase;
     var boxEnterpriseId = process.env.boxEnterpriseId;
-    var boxHousingUser = process.env.boxHousingUser;
+    var boxUser = process.env.boxUser;
 
     var sdk = new Box({
         clientID: boxClientID,
         clientSecret: boxClientSecret,
         appAuth: {
             keyID: publicKeyId,
-            privateKey: privateKey,
+            privateKey: privateKey.toString(),
             passphrase: publicKeyPassphrase
           }
       });
 
     var client = sdk.getAppAuthClient('enterprise', boxEnterpriseId);
-    client.asUser(boxHousingUser);
+    client.asUser(boxUser);
 
     return client;
   };

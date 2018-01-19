@@ -6,7 +6,18 @@
 var apiController = function(client) {
 
     var hello = function(req, res) {
-      res.status(200).send('Hello, this is the API route!');
+      let user = process.env.boxUser;
+      client.users.get(user, { fields: 'name, login' }, function(err, response) {
+        if (err) {
+          console.log(err);
+          res.status(200).send(err);
+        } else {
+          console.log(response);
+          res.status(200).send(response);
+        }
+      });
+
+      // res.status(200).send('Hello, this is the API route!');
     };
 
     var postReferral = function(req, res) {
