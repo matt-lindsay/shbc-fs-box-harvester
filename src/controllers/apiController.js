@@ -1,42 +1,33 @@
 'use strict';
 
-//const BoxFsService = require('../services/BoxFsService');
-//const boxClient = require('../resources/box');
+const BoxFsService = require('../services/BoxFsService');
 
 var apiController = function(client) {
 
     var hello = function(req, res) {
-      let user = process.env.boxUser;
-      client.users.get(user, { fields: 'name, login' }, function(err, response) {
+      client.users.get(client.CURRENT_USER_ID, { fields: 'name, login' }, function(err, response) {
         if (err) {
-          console.log(err);
-          res.status(200).send(err);
+          res.status(200).send('Get current client error ' + err);
         } else {
-          console.log(response);
-          res.status(200).send(response);
+          res.status(200).send('Hello ' + response.name);
         }
       });
-
-      // res.status(200).send('Hello, this is the API route!');
     };
 
     var postReferral = function(req, res) {
-        // let client = new boxClient();
+        let data = req.body;
 
-        // let data = req.body;
-
-        // // Box.
-        // var fsBox = new BoxFsService(client);
-        // fsBox.createTaskFolders(data, function(err, result) {
-        //     if (err) {
-        //       res.status(500).send(err);
-        //     } else {
-        //       res.status(201).send(result);
-        //     }
-        //   });
-        // console.log(data); // DEBUG TASK SYSTEM OUTPUT TO CONSOLE.
-        // res.status(200).send(data);
-        res.status(200).send('Hello!');
+        // Box.
+        var fsBox = new BoxFsService(client);
+        fsBox.createTaskFolders(data, function(err, result) {
+            if (err) {
+              res.status(500).send(err);
+            } else {
+              res.status(201).send(result);
+            }
+          });
+        console.log(data); // DEBUG TASK SYSTEM OUTPUT TO CONSOLE.
+        res.status(200).send(data);
       };
 
     return {

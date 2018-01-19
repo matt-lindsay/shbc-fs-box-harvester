@@ -9,7 +9,7 @@ var boxClient = function() {
     var publicKeyId = process.env.boxKeyID;
     var publicKeyPassphrase = process.env.boxKeyPassphrase;
     var boxEnterpriseId = process.env.boxEnterpriseId;
-    var boxUser = process.env.boxUser;
+    var boxUser = process.env.boxFsUser;
 
     var sdk = new Box({
         clientID: boxClientID,
