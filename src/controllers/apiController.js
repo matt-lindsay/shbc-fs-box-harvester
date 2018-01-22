@@ -19,7 +19,7 @@ var apiController = function(client) {
 
         // Box.
         var fsBox = new BoxFsService(client);
-        fsBox.createTaskFolders(data, function(err, result) {
+        fsBox.createReferralFolders(data, function(err, result) {
             if (err) {
               res.status(500).send(err);
             } else {
@@ -27,7 +27,7 @@ var apiController = function(client) {
             }
           });
         console.log(data); // DEBUG TASK SYSTEM OUTPUT TO CONSOLE.
-        res.status(200).send(data);
+        //res.status(200).send(data);
       };
 
     return {

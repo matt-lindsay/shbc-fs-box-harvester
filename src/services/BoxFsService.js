@@ -22,12 +22,12 @@ var BoxFsService = function(client) {
         if (data.caseno.match('RUN')) {
           boxFolder = process.env.boxRunFolder;
           // Search for an existing folder.
-          checkFolderExistence(data.caseno, boxFolder, function(err, checkFolderExistenceResult) {
+          checkFolderExistence(data.caseno, boxFolder, function(err, checkFolderExistenceResponse) {
             if (err) {
               cb(err, null);
             } else {
               // If folder does not exist, create it
-              if (checkFolderExistenceResult = false) {
+              if (checkFolderExistenceResponse === false) {
                 createBoxFolder(client, boxFolder, folderName, timestamp, subFolders,
                   function(err, createBoxFolderResponse) {
                   if (err) {
@@ -45,12 +45,12 @@ var BoxFsService = function(client) {
         } else if (data.caseno.match('SH')) {
           boxFolder = process.env.boxShFolder;
           // Search for an existing folder.
-          checkFolderExistence(data.caseno, boxFolder, function(err, checkFolderExistenceResult) {
+          checkFolderExistence(data.caseno, boxFolder, function(err, checkFolderExistenceResponse) {
             if (err) {
               cb(err, null);
             } else {
               // If folder does not exist, create it
-              if (checkFolderExistenceResult = false) {
+              if (checkFolderExistenceResponse === false) {
                 createBoxFolder(client, boxFolder, folderName, timestamp, subFolders,
                   function(err, createBoxFolderResponse) {
                   if (err) {
@@ -66,120 +66,16 @@ var BoxFsService = function(client) {
             }
           });
         }
-
-
-        // // Check for an Fs Referral #.
-        // if (data.caseno) {
-        //   client.search.query(data.caseno, { type: 'folder', ancestor_folder_ids: boxFolder },
-        //     function(err, primarySearchResults) {
-        //         if (err) {
-        //           cb(err, null);
-        //         } else {
-        //           if (primarySearchResults.total_count === 0) {
-        //             // Can't find h reg # in Task data, create the task separately.
-        //             // !!! TIDY UP
-        //             client.folders.create(boxFolder, folderName,
-        //                 function(err, createTaskFolderResponse) {
-        //                   if (err) {
-        //                     cb(err, null);
-        //                   } else {
-        //                     subFolders.forEach(function(folderItem) {
-        //                         client.folders.create(createTaskFolderResponse.id, folderItem,
-        //                             function(err, subfolderCreateResponse) {
-        //                           if (err) {
-        //                             console.log(err);
-        //                           } else {
-        //                             console.log('>>> ' + timestamp + ' Sub Folder created: ' +
-        //                               subfolderCreateResponse.name);
-        //                           }
-        //                         });
-        //                       });
-        //                     cb(null, 'Task folders created: ' + createTaskFolderResponse.name);
-        //                   }
-        //                 }); // !!!
-        //           } else { // Else create the task in the correct sub folder.
-        //             // Identify the correct sub folder.
-        //             client.folders.getItems(primarySearchResults.entries[0].id, null,
-        //                 function(err, secondarySearchResults) {
-        //                   if (err) {
-        //                     cb(err, null);
-        //                   } else { // Else iterate through the returned results and test for a match.
-        //                     let typeFolders = secondarySearchResults.entries;
-
-        //                     matchedResults(typeFolders, data.type).then(
-        //                         function(matchedResultsResponse) {
-        //                           // Create sub folder.
-        //                           createBoxFolder(client, matchedResultsResponse, folderName,
-        //                             timestamp, subFolders, function(err, createFolderResponse) {
-        //                               if (err) {
-        //                                 cb(err, 'Create Box Folder');
-        //                               } else {
-        //                                 cb(null, createFolderResponse);
-        //                               }
-        //                             });
-        //                         }, function(error) {
-        //                           cb(error);
-        //                         });
-        //                   }
-        //                 });
-        //           }
-        //         }
-        //       });
-        // } else {
-        //   // Create a separate task folder.
-        //   // !!! TIDY UP
-        //   client.folders.create(boxFolder, folderName,
-        //     function(err, createTaskFolderResponse) {
-        //       if (err) {
-        //         cb(err, null);
-        //       } else {
-        //         subFolders.forEach(function(folderItem) {
-        //               client.folders.create(createTaskFolderResponse.id, folderItem,
-        //                 function(err, subfolderCreateResponse) {
-        //                   if (err) {
-        //                     console.log(err);
-        //                   } else {
-        //                     console.log('>>> ' + timestamp + ' Sub Folder created: ' +
-        //                       subfolderCreateResponse.name);
-        //                   }
-        //                 });
-        //             });
-        //         cb(null, 'Task folders created: ' + createTaskFolderResponse.name);
-        //       }
-        //     }); // !!!
-        //   //cb(null, 'no H REG case');
-        // }
       };
 
-    // var matchedResults = function(subfolderResults, taskType) {
-    //     return new Promise(function(resolve, reject) {
-
-    //         // Test each result returned in searchResults for a match with folderName.
-    //         // If a match is not returned create the folder.
-    //         let matched = false;
-    //         let matchedId;
-
-    //         subfolderResults.forEach(function(item) {
-    //             if (item.name.match(taskType)) {
-    //               matched = true;
-    //               matchedId = item.id;
-    //             }
-    //           });
-    //         if (matched === true) {
-    //           resolve(matchedId); // Sub folder Id to create the task in.
-    //         } else if (matched === false) {
-    //           reject('nomatch'); // TODO Something is wrong: where is the correct sub folder?
-    //         }
-    //       });
-    //   };
-
-    var checkFolderExistence = function(caseno, boxFolder, cb) {
-      client.search.query(caseno, { type: 'folder', ancestor_folder_ids: boxFolder },
+    var checkFolderExistence = function(caseno, folderId, cb) {
+      client.search.query(caseno, { type: 'folder', ancestor_folder_ids: folderId },
         function(err, checkFolderExistenceResponse) {
           if (err) {
             cb(err, null);
           } else {
-            if (checkFolderExistenceResponse.total_count === 0) {
+            let totalCount = checkFolderExistenceResponse.total_count;
+            if (totalCount === 0) {
               cb(null, false); // folder does not exist.
             } else {
               cb(null, true); // folder does exist.
