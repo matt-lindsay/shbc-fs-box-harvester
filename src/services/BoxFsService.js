@@ -87,7 +87,13 @@ var BoxFsService = function(client) {
     var createBoxFolder = function(client, parentId, folderName, timestamp, subFolders, cb) {
         client.folders.create(parentId, folderName, function(err, response) {
             if (err) {
-              cb(err, null);
+              // Double execution check - in case a request has been sent more
+              // than once and Box has yet to index the newly created folders.
+              if (err.statusCode === 409) {
+                cb(null, 'Name already in use.');
+              } else {
+                cb(err, null);
+              }
             } else {
               let createFolderName = response.name;
               let createdFolderId = response.id;

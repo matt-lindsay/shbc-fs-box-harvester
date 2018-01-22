@@ -23,11 +23,13 @@ var apiController = function(client) {
             if (err) {
               res.status(500).send(err);
             } else {
-              res.status(201).send(result);
+              if (result === 'Name already in use.') {
+                res.status(200).send(result);
+              } else {
+                res.status(201).send(result);
+              }
             }
           });
-        console.log(data); // DEBUG TASK SYSTEM OUTPUT TO CONSOLE.
-        //res.status(200).send(data);
       };
 
     return {
