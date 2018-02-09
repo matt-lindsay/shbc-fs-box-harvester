@@ -7,7 +7,7 @@ const moment = require('moment');
 const app = express();
 const port = process.env.PORT || 8080;
 
-const BoxClient = require(__dirname + '/src/resources/box');
+var BoxClient = require('./src/resources/box');
 let client = new BoxClient();
 
 const indexRouter = require('./src/routes/indexRoutes')();
